@@ -15,8 +15,8 @@
 
 \begin{document}
 
-\title{SPANG: a SPARQL client with templating, one-liner functionalities, and API}
-\titlerunning{SPANG: a SPARQL client with templating, one-liner, and API}
+\title{SPANG: A SPARQL Client with One-Liners, Template Libraries, and API}
+\titlerunning{SPANG: A SPARQL Client with One-Liners, Template Libraries, and API}
 \author{Hirokazu Chiba\orcidID{0000-0003-4062-8903}}
 \authorrunning{H. Chiba}
 \institute{Database Center for Life Science, Chiba 277-0871, Japan\\
@@ -60,26 +60,48 @@ construct a server for providing queries.
 %Further, we demonstrate the usefulness of the constructed SPANG template library, which is reusable on the Semantic Web platform.
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Implementation}
-%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%
+\section{SPANG Overview}
+%%%%%%%%%%%%%%%%%%%%%%%%
 
+The SPANG~\cite{spang} project started aiming at maximizing the usability of SPARQL queries. 
 SPANG was originally developed as a command-line SPARQL client~\cite{spang}, and now it is re-implemented in JavaScript using Node.js. Thus, it can be called not only in command line but also in the JavaScript code used to construct a website.
 
-SPARQL templating syntax used in the SPANG framework is an extension of sparql-doc~\cite{sparql-doc}. Although the sparql-doc originally aimed at documentation of SPARQL, this notation is suitable for annotating each SPARQL query with metadata to increase the usability of the query. Each query with the metadata as comment lines added can be used as a standard SPARQL query. Furthermore, if a parser for the comment lines is implemented, users can make use of the metadata to search for useful information of the query.
-Here, we further parameterize SPARQL queries and consider the parameters of the query as metadata of SPARQL.
-As a syntax for parameterization in SPARQL code, we use mustache notation~\cite{mustache}.
 
-We implemented SPANG template engine in JavaScript, where the template is transformed into an abstract syntax tree, processed using the given parameters, and then reconstructed into SPARQL to be submitted to an endpoint. 
-We used Parsing Expression Grammar (PEG)~\cite{peg} expression of the SPARQL grammar, provided the EBNF of the SPARQL specifications~\cite{sparql}. The original implementation of PEG.js~\cite{pegjs} of SPARQL grammar exists in rdfstore-js project (\url{https://github.com/antoniogarrote/rdfstore-js})~\cite{rdfstore-js}.
-The PEG.js code was modified to fit the use in the case of the SPANG framework.
-The PEG.js is a parser generator, thus, we could generate the custom parser based on the PEG.js description. 
-%Thus, we obtained abstract syntax tree in the form of JSON object.
-While there have been other efforts to implement parser and formatter of SPARQL~\cite{sparql-js}, we developed a parser and a formatter that stringify the generated abstract syntax tree, on the basis of PEG expression. %Thus, SPANG can also reformat the input SPARQL.
+\begin{figure}[!t]
+\begin{scriptsize}
+\begin{verbatim}
+Usage: spang2 [options] <SPARQL_TEMPLATE> [par1=val1 par2=val2 ...]
 
-We also developed a SPANG server, where SPARQL queries can be executed on the browser or through REST API (\url{https://spang.dbcls.jp/}).
-SPANG server is developed using Ruby on Rails, and it can run on Docker.
-Thus, users can also run a SPANG server on their own. 
+Options:
+  -e, --endpoint <ENDPOINT>    target SPARQL endpoint
+  -o, --outfmt <FORMAT>        tsv, json, n-triples (nt), turtle (ttl), rdf/xml (rdfxml), n3, xml, html
+  -a, --abbr                   abbreviate results using predefined prefixes
+  -v, --vars                   variable names are included in output (in the case of tsv format)
+  -S, --subject <SUBJECT>      shortcut to specify subject
+  -P, --predicate <PREDICATE>  shortcut to specify predicate
+  -O, --object <OBJECT>        shortcut to specify object
+  -L, --limit <LIMIT>          LIMIT output (use alone or with -[SPOF])
+  -F, --from <FROM>            shortcut to search FROM specific graph (use alone or with -[SPOLN])
+  -N, --number                 shortcut to COUNT results (use alone or with -[SPO])
+  -G, --graph                  shortcut to search for graph names (use alone or with -[SPO])
+  -r, --prefix <PREFIX_FILES>  read prefix declarations (default: SPANG_DIR/etc/prefix,~/.spang/prefix)
+  -n, --ignore                 ignore user-specific file (~/.spang/prefix) for test purpose
+  -m, --method <METHOD>        GET or POST (default: "GET")
+  -q, --show_query             show query and quit
+  -f, --fmt                    format the query
+  -i, --indent <DEPTH>         indent depth; use with --fmt (default: 2)
+  -l, --list_nick_name         list up available nicknames of endpoints and quit
+  -d, --debug                  debug (output query embedded in URL, or output AST with --fmt)
+  -V, --version                output the version number
+  -h, --help                   output usage information
+
+\end{verbatim}
+\end{scriptsize}
+\caption{Usage of the SPANG command}
+\label{fig:spang-command}
+\end{figure}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Use Cases}
@@ -148,40 +170,6 @@ The following example command line gives a parameter to a local template query f
 \noindent Most of these one-liner functionalities are compatible with previous version of SPANG~\cite{spang}. The full usages of the SPANG command is shown in Figure~\ref{fig:spang-command}.
 
 
-\begin{figure}[!t]
-\begin{scriptsize}
-\begin{verbatim}
-Usage: spang2 [options] <SPARQL_TEMPLATE> [par1=val1 par2=val2 ...]
-
-Options:
-  -e, --endpoint <ENDPOINT>    target SPARQL endpoint
-  -o, --outfmt <FORMAT>        tsv, json, n-triples (nt), turtle (ttl), rdf/xml (rdfxml), n3, xml, html
-  -a, --abbr                   abbreviate results using predefined prefixes
-  -v, --vars                   variable names are included in output (in the case of tsv format)
-  -S, --subject <SUBJECT>      shortcut to specify subject
-  -P, --predicate <PREDICATE>  shortcut to specify predicate
-  -O, --object <OBJECT>        shortcut to specify object
-  -L, --limit <LIMIT>          LIMIT output (use alone or with -[SPOF])
-  -F, --from <FROM>            shortcut to search FROM specific graph (use alone or with -[SPOLN])
-  -N, --number                 shortcut to COUNT results (use alone or with -[SPO])
-  -G, --graph                  shortcut to search for graph names (use alone or with -[SPO])
-  -r, --prefix <PREFIX_FILES>  read prefix declarations (default: SPANG_DIR/etc/prefix,~/.spang/prefix)
-  -n, --ignore                 ignore user-specific file (~/.spang/prefix) for test purpose
-  -m, --method <METHOD>        GET or POST (default: "GET")
-  -q, --show_query             show query and quit
-  -f, --fmt                    format the query
-  -i, --indent <DEPTH>         indent depth; use with --fmt (default: 2)
-  -l, --list_nick_name         list up available nicknames of endpoints and quit
-  -d, --debug                  debug (output query embedded in URL, or output AST with --fmt)
-  -V, --version                output the version number
-  -h, --help                   output usage information
-
-\end{verbatim}
-\end{scriptsize}
-\caption{Usage of the SPANG command}
-\label{fig:spang-command}
-\end{figure}
-
 
 %%%%%%%%%%%%%%%%%%%%%%
 \subsection{Use through API}
@@ -199,6 +187,33 @@ On the SPANG server, users can also get the results only by clicking on the web 
 
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Implementation}
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+SPARQL templating syntax used in the SPANG framework is an extension of sparql-doc~\cite{sparql-doc}. Although the sparql-doc originally aimed at documentation of SPARQL, this notation is suitable for annotating each SPARQL query with metadata to increase the usability of the query. Each query with the metadata as comment lines added can be used as a standard SPARQL query. Furthermore, if a parser for the comment lines is implemented, users can make use of the metadata to search for useful information of the query.
+Here, we further parameterize SPARQL queries and consider the parameters of the query as metadata of SPARQL.
+As a syntax for parameterization in SPARQL code, we use mustache notation~\cite{mustache}.
+
+We implemented SPANG template engine in JavaScript, where the template is transformed into an abstract syntax tree, processed using the given parameters, and then reconstructed into SPARQL to be submitted to an endpoint. 
+We used Parsing Expression Grammar (PEG)~\cite{peg} expression of the SPARQL grammar, provided the EBNF of the SPARQL specifications~\cite{sparql}. The original implementation of PEG.js~\cite{pegjs} of SPARQL grammar exists in rdfstore-js project (\url{https://github.com/antoniogarrote/rdfstore-js})~\cite{rdfstore-js}.
+The PEG.js code was modified to fit the use in the case of the SPANG framework.
+The PEG.js is a parser generator, thus, we could generate the custom parser based on the PEG.js description. 
+%Thus, we obtained abstract syntax tree in the form of JSON object.
+While there have been other efforts to implement parser and formatter of SPARQL~\cite{sparql-js}, we developed a parser and a formatter that stringify the generated abstract syntax tree, on the basis of PEG expression. %Thus, SPANG can also reformat the input SPARQL.
+
+We also developed a SPANG server, where SPARQL queries can be executed on the browser or through REST API (\url{https://spang.dbcls.jp/}).
+SPANG server is developed using Ruby on Rails, and it can run on Docker.
+Thus, users can also run a SPANG server on their own. 
+
+%%%%%%%%%%%%%%%%%%%%%%
+\section{Related Work}
+%%%%%%%%%%%%%%%%%%%%%%
+
+SPARQL tempalting mechanisms have been implemented in various projects. Based on the templating mechanisms, SPARQL libraries have been implemented, such as Bioqueries~\cite{bioqueries}. Bioqueries have tried to collect SPARQL queries as community effort. It increase the findability and reusability.
+However, the query can only be executed on the web site.
+Users should copy and paste the queries into their own software.
+In contrast, we tried to build a software network on top of the Semantic Web platform.
 
 % \subsubsection{Calling libraries}
 
@@ -278,6 +293,9 @@ SPARQL.js – A SPARQL 1.1 parser for JavaScript
 
 \bibitem{disgenet}
 Queralt-Rosinach, N., Pinero, J., Bravo, À., Sanz, F., & Furlong, L. I. (2016). DisGeNET-RDF: harnessing the innovative power of the Semantic Web to explore the genetic basis of diseases. Bioinformatics, 32(14), 2236-2238.
+
+\bibitem{bioqueries}
+García-Godoy, M. J., Navas-Delgado, I., & Aldana-Montes, J. (2011, December). Bioqueries: a social community sharing experiences while querying biological linked data. In Proceedings of the 4th international workshop on semantic web applications and tools for the life sciences (pp. 24-31).
 
 \end{thebibliography}
 \end{document}

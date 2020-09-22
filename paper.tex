@@ -52,7 +52,7 @@ However, due to the limitation of SPARQL specifications, such as the lack of par
 % Reusing SPARQL queries are important for efficient development of the Semantic Web.
 
 
-We present SPANG and its use cases to make SPARQL queries more reusable and thereby maximize the value of written SPARQL queries;
+We present SPANG and the use cases to make SPARQL queries more reusable and thereby maximize the value of written SPARQL queries;
 assign metadata to SPARQL queries;
 parameterize the SPARQL queries;
 assign global identifiers; and
@@ -214,49 +214,6 @@ SPARQL tempalting mechanisms have been implemented in various projects. Based on
 However, the query can only be executed on the web site.
 Users should copy and paste the queries into their own software.
 In contrast, we tried to build a software network on top of the Semantic Web platform.
-
-% \subsubsection{Calling libraries}
-
-% Although SPARQL shortcuts are useful for simple querying with typical query patterns, they do not cover various
-% queries with complicated patterns. 
-% Thus, SPANG provides a mechanism to accept SPARQL templates to generate arbitrary query patterns. 
-% An example query is: 
-
-% \texttt{spang uniprot taxtree\_ancestor 511145 -ac}
-
-% \noindent where the first argument is the target SPARQL endpoint and the following arguments are SPARQL templates and parameters. {\tt taxtree\_ancestor} is the name of a SPARQL template included in the predefined SPARQL library (see supplementary data for the code), {\tt 511145} is the parameter, {\tt -a} is the option for abbreviating results, and {\tt -c} is for aligning output columns for easier reading.
-% The specified parameter replaces the placeholder included in the template before execution. 
-% This example query traverses the NCBI taxonomy tree from the given ID (511145) to the root node and outputs scientific names in each taxonomic rank.
-
-
-% Available SPARQL templates are not limited to the local library.
-% If SPARQL libraries are published on the Web, the users can call the templates by means of URIs across the Web.
-% An example usage of the Microbial Genome Database (MBGD) SPARQL library published at http://mbgd.genome.ad.jp/sparql/library/ is as follows.
-
-% \texttt{spang mbgd mbgdl:get\_ortholog K9Z723}
-
-% where {\tt mbgd} is the MBGD SPARQL endpoint \citep{Chiba} and \texttt{mbgdl:} is a prefix for abbreviating the URI of the template {\tt get\_ortholog} in the MBGD SPARQL library (see supplementary data for the code). 
-% The template can be specified in the full URI or in abbreviated form using the predefined prefix declarations.
-% This example query searches the MBGD database \citep{Uchiyama} for the orthologs of a protein \texttt{K9Z723} (Photosystem II lipoprotein Psb27).
-
-
-% \subsubsection{Combinatorial execution}
-
-% SPANG combines multiple queries through a Unix pipe. 
-% Combining a {\tt spang} command in shortcut mode and another one in template mode is also possible.
-% An example of such a combinatorial query is shown in Fig.~\ref{fig:01}.
-% The first {\tt spang} command is in template mode, which is the same as that presented in the Section 2.3. 
-% This command searches the MBGD database for orthologs of a protein {\tt K9Z723}. 
-% The obtained list of proteins are used in the second query, which searches the UniProt database for annotations of the given list of proteins. 
-% The option \texttt{-S 1} specifies the values from the first column of the standard input as subject.
-% This combinatorial query enables integrative use of two databases distributed across the Web. 
-% Here, the output of the first command can be further modified by altering the second command.
-% For example:
-% \begin{quoting}
-% \texttt{spang mbgd mbgdl:get\_ortholog K9Z723 | spang uniprot uniprot\_xref PDB}
-% \vspace{1pt}
-% \end{quoting}
-% where {\tt uniprot\_xref} is a SPARQL template (see supplementary data for the code), which retrieves cross-references from the UniProt IDs given in the standard input to the database specified as the parameter (in this example, {\tt PDB}). This example command line searches for entries in the Protein Data Bank (PDB) \citep{Berman} among orthologs of {\tt K9Z723}.
 
 
 

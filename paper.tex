@@ -13,6 +13,13 @@
 % to display URLs in blue roman font according to Springer's eBook style:
 % \renewcommand\UrlFont{\color{blue}\rmfamily}
 
+\newcommand\blfootnote[1]{%
+  \begingroup
+  \renewcommand\thefootnote{}\footnote{#1}%
+  \addtocounter{footnote}{-1}%
+  \endgroup
+}
+
 \begin{document}
 
 \title{SPANG: A SPARQL Client with One-Liners, Template Libraries, and Programming Interfaces}
@@ -25,12 +32,13 @@
 %
 \maketitle              % typeset the header of the contribution
 %
+
 \begin{abstract}
 %The abstract should briefly summarize the contents of the paper in 15--250 words.
 %How can we maximize the value of accumulated SPARQL queries? 
 SPARQL is a key component of the Semantic Web, and thus, the reusability of SPARQL is crucial for maximizing productivity on the Semantic Web.
 While an increasing number of datasets have been published in the Resource Description Framework (RDF) and the SPARQL standard allows for an interoperable framework for querying the RDF datasets, the reuse of SPARQL queries remains limited. We present SPANG, a framework to make SPARQL queries more reusable using a templating engine, one-liner functionality, and an application programming interface. Here we demonstrate its use cases for making SPARQL queries more reusable; assigning a set of metadata for annotating a SPARQL query, which enables to identify SPARQL query and provides useful information for the query; parameterizing SPARQL queries, which makes each query reusable under different settings; assigning a globally unique and stable identifier for each query; and constructing a server to provide indices of SPARQL queries. SPANG makes SPARQL queries more reusable in the local system or across the Web and leads to the construction of an eco-system wherein SPARQL queries are shared to maximize the productivity of Semantic Web developers and users. SPANG is available at \url{https://spang.dbcls.jp/}.
-
+\blfootnote{Copyright © 2020 for this paper by its author. Use permitted under Creative Commons License Attribution 4.0 International (CC BY 4.0).}
 \keywords{SPARQL \and template engine \and one-liner \and query library}
 
 \end{abstract}

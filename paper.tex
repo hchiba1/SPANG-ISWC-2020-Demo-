@@ -204,7 +204,7 @@ Herein, we further parameterize the SPARQL queries and consider the parameters o
 As a syntax for parameterization in SPARQL code, we use mustache notation~\cite{mustache}.
 
 We implemented the SPANG template engine in JavaScript, where the template is transformed into an abstract syntax tree, processed using the given parameters, and then reconstructed into SPARQL to be submitted to an endpoint. 
-We used Parsing Expression Grammar (PEG)~\cite{peg} expression of the SPARQL grammar based on the EBNF of the SPARQL specifications~\cite{sparql}. The original implementation of PEG.js~\cite{pegjs} of the SPARQL grammar exists in the rdfstore-js project (\url{https://github.com/antoniogarrote/rdfstore-js})~\cite{rdfstore-js}.
+We used Parsing Expression Grammar (PEG)~\cite{peg} expression of the SPARQL grammar based on the EBNF of the SPARQL specifications~\cite{sparql}. The original implementation of PEG.js~\cite{pegjs} of the SPARQL grammar exists in the rdfstore-js project (\url{https://github.com/antoniogarrote/rdfstore-js}).
 The PEG.js code was modified to fit the use in the case of the SPANG framework.
 PEG.js is a parser generator, and thus, we could generate a custom parser based on the PEG.js description. 
 %Thus, we obtained abstract syntax tree in the form of JSON object.
@@ -248,9 +248,6 @@ SPARQL 1.1 Query Language, W3C Recommendation 21 March 2013. \url{http://www.w3.
 \bibitem{pegjs}
 PEG.js – Parser Generator for JavaScript
 \url{https://pegjs.org/}
-
-\bibitem{rdfstore-js}
-Hernández, A. G., & GARCıA, M. N. M. (2012). A JavaScript RDF store and application library for linked data client applications. In Devtracks of the, WWW2012, conference. Lyon, France.
 
 \bibitem{sparql-js}
 SPARQL.js – A SPARQL 1.1 parser for JavaScript

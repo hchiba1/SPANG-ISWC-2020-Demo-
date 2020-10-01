@@ -12,6 +12,7 @@
 % If you use the hyperref package, please uncomment the following line
 % to display URLs in blue roman font according to Springer's eBook style:
 % \renewcommand\UrlFont{\color{blue}\rmfamily}
+\pagestyle{empty}
 
 \newcommand\blfootnote[1]{%
   \begingroup
@@ -22,9 +23,9 @@
 
 \begin{document}
 
-\title{SPANG: A SPARQL Client with Templates, One-Liners, and Programming Interfaces}
+\title{SPANG: A SPARQL Client with Templates, One-Liners, and Application Programming Interfaces}
 \titlerunning{SPANG: A SPARQL Client with Templates, One-Liners, and API}
-\author{Hirokazu Chiba\orcidID{0000-0003-4062-8903}}
+\author{Hirokazu Chiba}
 \authorrunning{H. Chiba}
 \institute{Database Center for Life Science, Chiba 277-0871, Japan\\
 \email{chiba@dbcls.rois.ac.jp}
@@ -37,9 +38,9 @@
 %The abstract should briefly summarize the contents of the paper in 15--250 words.
 %How can we maximize the value of accumulated SPARQL queries? 
 SPARQL is a key component of the Semantic Web, and its reusability of is crucial for maximizing productivity on the Semantic Web.
-While an increasing number of datasets have been published in the Resource Description Framework (RDF) and the SPARQL standard allows for an interoperable framework for querying the RDF datasets, the reuse of SPARQL queries remains limited. Herein, we present SPANG, a framework used to facilitate the reuse of SPARQL queries by using a template engine, one-liner functionalities, and programming interfaces. We demonstrate its use for making SPARQL queries more reusable; assign a set of metadata for annotating a SPARQL query, which enables the identification of the SPARQL query and provides useful information for the query; parameterize SPARQL queries, which makes each query reusable under different settings; assign a globally unique and stable identifier for each query; and construct a server for providing the indices of SPARQL queries. SPANG makes SPARQL queries more reusable in the local system or across the Web and facilitate the construction of an eco-system wherein SPARQL queries are shared to maximize the productivity of Semantic Web developers and users. SPANG is available at \url{https://spang.dbcls.jp/}.
+While an increasing number of datasets have been published in the Resource Description Framework (RDF) and the SPARQL standard allows for an interoperable framework for querying the RDF datasets, the reuse of SPARQL queries remains limited. Herein, we present SPANG, a framework used to facilitate the reuse of SPARQL queries by using a template engine, one-liner functionalities, and application programming interfaces. We demonstrate its use for making SPARQL queries more reusable; assign a set of metadata for annotating a SPARQL query, which enables the identification of the SPARQL query and provides useful information for the query; parameterize SPARQL queries, which makes each query reusable under different settings; assign a URI for each query; and construct a server for providing the indices of SPARQL queries. SPANG makes SPARQL queries more reusable in the local system or across the Web and facilitate the construction of an eco-system wherein SPARQL queries are shared to maximize the productivity of Semantic Web developers and users. SPANG is available at \url{https://spang.dbcls.jp/}.
 \blfootnote{Copyright © 2020 for this paper by its author. Use permitted under Creative Commons License Attribution 4.0 International (CC BY 4.0).}
-\keywords{SPARQL \and template engine \and one-liner \and query library}
+\keywords{SPARQL \and template engine \and query library \and one-liner \and API}
 
 \end{abstract}
 
@@ -50,7 +51,7 @@ While an increasing number of datasets have been published in the Resource Descr
 
 An increasing number of datasets have been published in the Resource Description Framework (RDF).
 SPARQL is the standardized interface to RDF and contributes to the effective reuse of distributed RDF data. 
-Although eco-systems have been developed for effective use of SPARQL, writing SPARQL codes is often a burden for Semantic Web developers and users. 
+Although eco-systems have been developed for developing SPARQL queries, writing SPARQL codes is often a burden for Semantic Web developers and users. 
 SPARQL queries have been written in many projects and are the result of developers' efforts. 
 %How can we maximize the value of accumulated SPARQL queries?
 The value of the SPARQL queries accumulated thus far can be maximized by reusing SPARQL queries.
@@ -62,9 +63,9 @@ However, owing to the limitation of SPARQL specifications, such as the lack of a
 
 
 We present SPANG and demonstrate its use for making SPARQL queries more reusable, thereby maximizing the value of the written SPARQL queries;
-assign metadata to SPARQL queries;
-parameterize the SPARQL queries;
-assign global identifiers; and
+we assign metadata to SPARQL queries,
+parameterize the SPARQL queries,
+assign a URI for each query, and
 construct a server for providing queries.
 %Further, we demonstrate the usefulness of the constructed SPANG template library, which is reusable on the Semantic Web platform.
 
@@ -115,11 +116,7 @@ Options:
 %%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Use Cases}
 %%%%%%%%%%%%%%%%%%%%%%%%%
-The use cases illustrate the following issues involved in making SPARQL queries more reusable;
-assigning metadata to SPARQL queries;
-parameterizing the SPARQL queries;
-assigning global identifiers;
-and constructing a server for providing queries.
+The use cases illustrate the following issues involved in making SPARQL queries more reusable.
 An example query to the DisGeNET endpoint~\cite{disgenet} is presented in Figure~\ref{fig:example-sparql}.
 This query retrieves genes associated with a specific disease.
 The example query includes metadata at the beginning of the query in the form of comment lines.
@@ -168,7 +165,9 @@ The following example command line gives a parameter to a local template query f
 
 \texttt{spang2 disease\_gene.rq disease=C0751955}
 
-\noindent The template can also be a URL that returns a SPANG template (\url{https://raw.githubusercontent.com/hchiba1/spang/master/library/disgenet/disease_gene.rq}). Other use cases include one-liner functionalities, such as
+\noindent The template can also be a URL that returns a SPANG template (\url{https://raw.githubusercontent.com/hchiba1/spang/master/library/disgenet/disease_gene.rq}). 
+Thus, anyone can host the query libraries on GitHub.
+Other use cases include one-liner functionalities, such as
 
 \texttt{spang2 -e disgenet -N -O ncbigene:2247}
 
@@ -176,7 +175,7 @@ The following example command line gives a parameter to a local template query f
 
 \texttt{spang2 -e disgenet -N -O ncbigene:2247 -q}
 
-\noindent Most of these one-liner functionalities are compatible with previous versions of SPANG~\cite{spang}. The full use of the SPANG command is illustrated in Figure~\ref{fig:spang-command}.
+\noindent Most of these one-liner functionalities are compatible with previous versions of SPANG~\cite{spang}. The full usage of the SPANG command is illustrated in Figure~\ref{fig:spang-command}.
 
 
 
@@ -184,7 +183,8 @@ The following example command line gives a parameter to a local template query f
 \subsection{Use through API}
 %%%%%%%%%%%%%%%%%%%%%%
 
-
+The SPARQL templates can also be called in the JavaScript code used to construct a website. The documentation is available at %\url{https://spang.readthedocs.io/}.
+the project home page.
 Users can also execute templates that are predefined and provided by the SPANG server through the REST API.
 Accessing the following URI returns the result of the query with the given parameter:
 \url{https://spang-portal.dbcls.jp/api/library/disgenet/disease_gene.rq?arg1=C0751955}. The following URI returns the list of queries in the library: \url{https://spang-portal.dbcls.jp/api/library/disgenet}.
@@ -195,19 +195,19 @@ Accessing the following URI returns the result of the query with the given param
 Users can also obtain the results on the SPANG server by clicking on the web pages while browsing the templates on the server (\url{https://spang-portal.dbcls.jp/library/disgenet/disease_gene.rq}). 
 
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Implementation}
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
-The SPARQL templating syntax used in the SPANG framework is an extension of sparql-doc~\cite{sparql-doc}. Although the use of sparql-doc was originally aimed at the documentation of SPARQL, this notation is suitable for annotating each SPARQL query with metadata to increase the usability of the query. Each query, with the metadata added as comment lines, can be used as a standard SPARQL query. Furthermore, if a parser is implemented for the comment lines, users can utilize the metadata to search for useful information in the query.
+The SPARQL templating syntax used in the SPANG framework is an extension of sparql-doc~\cite{sparql-doc}. Although the use of sparql-doc was originally aimed at the documentation of SPARQL, this notation is suitable for annotating each SPARQL query with metadata to increase the usability of the query. Each query, with the metadata added as comment lines, can be used as a standard SPARQL query. Furthermore, if a parser is implemented for the comment lines, users can utilize the metadata to search for useful information about the query.
 Herein, we further parameterize the SPARQL queries and consider the parameters of the query as the metadata of SPARQL.
 As a syntax for parameterization in SPARQL code, we use mustache notation~\cite{mustache}.
 
 We implemented the SPANG template engine in JavaScript, where the template is transformed into an abstract syntax tree, processed using the given parameters, and then reconstructed into SPARQL to be submitted to an endpoint. 
-We used Parsing Expression Grammar (PEG)~\cite{peg} expression of the SPARQL grammar based on the EBNF of the SPARQL specifications~\cite{sparql}. The original implementation of PEG.js~\cite{pegjs} of the SPARQL grammar exists in the rdfstore-js project (\url{https://github.com/antoniogarrote/rdfstore-js}).
+We used Parsing Expression Grammar (PEG)~\cite{peg} expression of the SPARQL grammar based on the EBNF of the SPARQL specifications~\cite{sparql}. 
+PEG.js~\cite{pegjs} is a parser generator, and thus, we could generate a custom parser based on a PEG description. 
+The original implementation of PEG.js of the SPARQL grammar is in the rdfstore-js project (\url{https://github.com/antoniogarrote/rdfstore-js}).
 The PEG.js code was modified to fit the use in the case of the SPANG framework.
-PEG.js is a parser generator, and thus, we could generate a custom parser based on the PEG.js description. 
 %Thus, we obtained abstract syntax tree in the form of JSON object.
 While other efforts have been made to implement the parser and formatter of SPARQL~\cite{sparql-js}, we developed a parser and formatter that stringify the generated abstract syntax tree based on the PEG expression. %Thus, SPANG can also reformat the input SPARQL.
 
@@ -219,9 +219,9 @@ Thus, users can also run a SPANG server on their own.
 \section{Related Work}
 %%%%%%%%%%%%%%%%%%%%%%
 
-SPARQL templating mechanisms have been implemented in various projects. SPARQL libraries, such as Bioqueries~\cite{bioqueries}, have been implemented based on the templating mechanisms. Bioqueries comprise an effort to collect SPARQL queries as a community attempt. It contributed the increased findability of queries.
-However, the users should still copy and paste the queries into their own software in specific templating formats to reuse them.
-In this paper, we present SPANG framework, where we attempt to build a software network with programming interfaces based on the Semantic Web platform.
+SPARQL templating mechanisms have been implemented in various projects. SPARQL libraries, such as Bioqueries~\cite{bioqueries}, have been implemented based on templating mechanisms. Bioqueries comprise an effort to collect SPARQL queries as a community attempt, contributing to the increased findability of the queries.
+However, the users should still copy the queries into their own software in specific templating formats to reuse the queries.
+In this paper, we present SPANG framework, where we attempt to build a software network with solid programming interfaces based on the Semantic Web platform.
 
 
 
@@ -230,6 +230,9 @@ In this paper, we present SPANG framework, where we attempt to build a software 
 
 \bibitem{spang}
 Chiba, H., & Uchiyama, I. (2017). SPANG: a SPARQL client supporting generation and reuse of queries for distributed RDF databases. BMC bioinformatics, 18(1), 93.
+
+\bibitem{disgenet}
+Queralt-Rosinach, N., Pinero, J., Bravo, À., Sanz, F., & Furlong, L. I. (2016). DisGeNET-RDF: harnessing the innovative power of the Semantic Web to explore the genetic basis of diseases. Bioinformatics, 32(14), 2236-2238.
 
 \bibitem{sparql-doc}
 sparql-doc: Generate HTML documentation from SPARQL queries.
@@ -246,15 +249,12 @@ Ford, B. (2004, January). Parsing expression grammars: a recognition-based synta
 SPARQL 1.1 Query Language, W3C Recommendation 21 March 2013. \url{http://www.w3.org/TR/sparql11-query/}
 
 \bibitem{pegjs}
-PEG.js – Parser Generator for JavaScript
+PEG.js – Parser Generator for JavaScript.
 \url{https://pegjs.org/}
 
 \bibitem{sparql-js}
-SPARQL.js – A SPARQL 1.1 parser for JavaScript
+SPARQL.js – A SPARQL 1.1 parser for JavaScript.
 \url{https://github.com/RubenVerborgh/SPARQL.js}
-
-\bibitem{disgenet}
-Queralt-Rosinach, N., Pinero, J., Bravo, À., Sanz, F., & Furlong, L. I. (2016). DisGeNET-RDF: harnessing the innovative power of the Semantic Web to explore the genetic basis of diseases. Bioinformatics, 32(14), 2236-2238.
 
 \bibitem{bioqueries}
 García-Godoy, M. J., Navas-Delgado, I., & Aldana-Montes, J. (2011, December). Bioqueries: a social community sharing experiences while querying biological linked data. In Proceedings of the 4th international workshop on semantic web applications and tools for the life sciences (pp. 24-31).
